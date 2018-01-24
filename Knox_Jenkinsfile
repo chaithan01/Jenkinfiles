@@ -1,0 +1,18 @@
+docker.image('possd_ubuntu16:v1').inside("-v /var/lib/jenkins/.m2/repository:/home/jenkins/m2repository") {
+    stage('Preparation') { // for display purposes
+        // Get some code from a GitHub repository
+        git 'https://github.com/apache/knox.git'
+    }
+    stage('Build') {
+        // Run the maven build
+        if (isUnix()) {
+            sh "/opt/maven/bin/mvn clean install -f"
+        } else {
+            //bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+        }
+    }
+    stage('Results') {
+        junit '**/target/surefire-reports/TEST-*.xml'
+        archive 'target/*.jar'
+    }
+}
