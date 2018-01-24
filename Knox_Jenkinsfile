@@ -1,7 +1,7 @@
 docker.image('possd_ubuntu16:v1').inside("-v /var/lib/jenkins/.m2/repository:/home/jenkins/m2repository") {
     stage('Preparation') { // for display purposes
         // Get some code from a GitHub repository
-        git 'https://github.com/apache/knox.git'
+        git branch: 'master', url: 'https://github.com/apache/knox.git'
     }
     stage('Build') {
         // Run the maven build
