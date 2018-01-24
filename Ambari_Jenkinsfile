@@ -1,23 +1,15 @@
-docker.image('possd_ubuntu16:v1').inside("-v /var/lib/jenkins/.m2/repository:/home/jenkins/m2repository") {
-    stage('Preparation') { // for display purposes
+docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository") {
+    stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'trunk', url: 'https://github.com/apache/ambari.git'
     }
     stage('Compile') {
-        // Run the maven build
-        if (isUnix()) {
-            sh "/opt/maven/bin/mvn clean install -DskipTests -Dcheckstyle.skip -Drat.skip"
-        } else {
-            //bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
-        }
+        // Run the maven build without test
+        sh "/opt/maven/bin/mvn clean install -DskipTests -Dcheckstyle.skip -Drat.skip"
     }
     stage('Test') {
-        // Run the maven build
-        if (isUnix()) {
-            sh "/opt/maven/bin/mvn install -fn -Dcheckstyle.skip"
-        } else {
-            //bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
-        }
+        // Run the maven build with test
+        sh "/opt/maven/bin/mvn install -fn -Dcheckstyle.skip"
     }
     stage('Results') {
         junit '**/target/surefire-reports/TEST-*.xml'
