@@ -1,12 +1,12 @@
 //node {
-docker.image('possd_ubuntu16:v1').inside("-v /var/lib/jenkins/.m2/repository:/home/jenkins/m2repository") {
+docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository") {
     //def mvnHome
     stage('Preparation') { // for display purposes
         //sh 'which mvn'
         //sh 'pwd'
         //sh 'hostname'
         // Get some code from a GitHub repository
-        git 'https://github.com/apache/accumulo.git'
+        git branch: 'master', url: 'https://github.com/apache/accumulo.git'
         // Get the Maven tool.
         // ** NOTE: This 'M3' Maven tool must be configured
         // **       in the global configuration.
