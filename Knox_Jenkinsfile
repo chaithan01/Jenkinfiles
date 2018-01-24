@@ -6,7 +6,7 @@ docker.image('possd_ubuntu16:v1').inside("-v /var/lib/jenkins/.m2/repository:/ho
     stage('Build') {
         // Run the maven build
         if (isUnix()) {
-            sh "/opt/maven/bin/mvn clean install -f"
+            sh "/opt/maven/bin/mvn clean install -fn"
         } else {
             //bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
         }
