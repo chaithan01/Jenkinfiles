@@ -1,0 +1,29 @@
+docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+    environment {
+        MAVEN_OPTS=-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m
+        JAVA_TOOL_OPTIONS=-Dos.arch=ppc64le
+    }
+    stage('Preparation') {
+        // Get some code from a GitHub repository
+        git branch: 'trunk', url: 'https://github.com/apache/kafka.git'
+    }
+    stage('Compile') {
+        // bootstrap and download the wrapper
+        sh "gradle"
+        // Building a binary release gzipped tar ball
+        sh "./gradlew clean releaseTarGz -x signArchives"
+        // Installing the jars to the local Maven repository
+        sh "./gradlew installAll"
+    }
+    stage('Test') {
+        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean testAll --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
+        // runs both unit and integration tests
+        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean test -PscalaVersion=2.12 --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
+    }
+    stage('Results') {
+        junit '**/build/test-results/test/*.xml'
+        archive '**/build/*/*.jar'
+        // junit '**/target/surefire-reports/TEST-*.xml'
+        // archive 'target/*.jar'
+    }
+}
