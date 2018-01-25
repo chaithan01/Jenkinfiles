@@ -23,7 +23,5 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     stage('Results') {
         junit '**/build/test-results/test/*.xml'
         archive '**/build/*/*.jar'
-        // junit '**/target/surefire-reports/TEST-*.xml'
-        // archive 'target/*.jar'
     }
 }
