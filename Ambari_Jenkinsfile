@@ -6,11 +6,11 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Compile') {
         // Run the maven build without test
-        sh "/opt/maven/bin/mvn clean install -DskipTests -Dcheckstyle.skip -Drat.skip"
+        sh "/opt/maven/bin/mvn clean install -DskipTests"
     }
     stage('Test') {
         // Run the maven build with test
-        sh "/opt/maven/bin/mvn install -fn -Dcheckstyle.skip"
+        sh "/opt/maven/bin/mvn install -fae"
     }
     stage('Results') {
         junit '**/target/surefire-reports/TEST-*.xml'
