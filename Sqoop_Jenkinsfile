@@ -11,7 +11,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         sh "ant -Dtest.junit.output.format=xml clean package test"
     }
     stage('Results') {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archive 'target/*.jar'
+        junit '**/build/test/*.xml'
+        archive '**/build/*.jar'
     }
 }
