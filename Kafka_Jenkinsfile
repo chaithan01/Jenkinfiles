@@ -1,7 +1,7 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
     environment {
         MAVEN_OPTS          =   '-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
-        JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
+        //JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
     }
     stage('Preparation') {
         // Get some code from a GitHub repository
