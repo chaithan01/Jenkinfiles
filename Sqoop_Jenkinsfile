@@ -12,6 +12,6 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Results') {
         junit '**/build/test/*.xml'
-        archive '**/build/*.jar'
+        archive 'build/*.jar'
     }
 }
