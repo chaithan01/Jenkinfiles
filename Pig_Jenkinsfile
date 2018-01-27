@@ -9,7 +9,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     post {
         always {
-            junit '**/build/test/logs/TEST-*.xml'
+            junit 'build/test/logs/TEST-*.xml'
             archive '**/*.jar'
         }
     }
