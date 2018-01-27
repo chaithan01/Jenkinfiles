@@ -7,8 +7,10 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         // Run the ant build
         sh "ant clean piggybank jar compile-test test-commit -Dtest.junit.output.format=xml"
     }
-    stage('Results') {
-        junit '**/build/test/logs/TEST-*.xml'
-        archive '**/*.jar'
+    post {
+        always {
+            junit '**/build/test/logs/TEST-*.xml'
+            archive '**/*.jar'
+        }
     }
 }
