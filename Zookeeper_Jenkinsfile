@@ -10,8 +10,10 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         // Run the maven build with test
         sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
     }
-    stage('Results') {
-        junit '**/build/test/logs/*.xml'
-        archive '**/build/*.jar'
+    post {
+    always {
+        junit 'build/test/logs/*.xml'
+        archive 'build/*.jar'
+    }
     }
 }
