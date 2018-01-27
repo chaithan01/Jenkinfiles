@@ -16,14 +16,16 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         sh "./gradlew installAll"
     }
     stage('Test') {
-        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean testAll --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
-        // runs both unit and integration tests
-        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean test -PscalaVersion=2.12 --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
-    }
-    post {
-    always {
-        junit '**/build/*/*/test/*.xml'
-        archive '**/build/*/*.jar'
-    }
+        steps {
+	        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean testAll --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
+    	    // runs both unit and integration tests
+	        sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean test -PscalaVersion=2.12 --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
+        }
+        post {
+		    always {
+		        junit '**/build/*/*/test/*.xml'
+        		archive '**/build/*/*.jar'
+		    }
+    	}
     }
 }

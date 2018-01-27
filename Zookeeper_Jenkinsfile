@@ -7,13 +7,16 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
     }
     stage('Build') {
-        // Run the maven build with test
-        sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
-    }
-    post {
-    always {
-        junit 'build/test/logs/*.xml'
-        archive 'build/*.jar'
-    }
+        
+        steps {
+	    	// Run the ant build with test
+        	sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
+        }
+        post {
+		    always {
+		        junit 'build/test/logs/*.xml'
+        		archive 'build/*.jar'
+		    }
+    	}
     }
 }

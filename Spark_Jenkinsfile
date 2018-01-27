@@ -8,13 +8,16 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         sh "/opt/maven/bin/mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr"
     }
     stage('Test') {
-        // Run the maven build with test
-        sh "/opt/maven/bin/mvn clean install -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr -fn"
-    }
-    post {
-    always {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archive '**/target/*.jar'
-    }
+        
+        steps {
+	        // Run the maven build with test
+        	sh "/opt/maven/bin/mvn clean install -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr -fn"
+        }
+        post {
+		    always {
+		        junit '**/target/surefire-reports/TEST-*.xml'
+        		archive '**/target/*.jar'
+		    }
+    	}
     }
 }

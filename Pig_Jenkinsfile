@@ -5,12 +5,14 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Build') {
         // Run the ant build
-        sh "ant clean piggybank jar compile-test test-commit -Dtest.junit.output.format=xml"
-    }
-    post {
-        always {
-            junit 'build/test/logs/TEST-*.xml'
-            archive 'build/*.jar'
+        steps {
+        	sh "ant clean piggybank jar compile-test test-commit -Dtest.junit.output.format=xml"
         }
+        post {
+		    always {
+		        junit 'build/test/logs/TEST-*.xml'
+            	archive 'build/*.jar'
+		    }
+    	}
     }
 }

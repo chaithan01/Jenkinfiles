@@ -8,17 +8,15 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         sh "/opt/maven/bin/mvn clean install -DskipTests"
     }
     stage('Test') {
-        // Run the maven build with test
-        sh "/opt/maven/bin/mvn install -fn -Dtest.junit.output.format=xml"
-    }
-    post {
-        always {
-            junit '**/target/surefire-reports/TEST-*.xml'
-            archive '**/target/*.jar'
+        steps {
+	        // Run the maven build with test
+        	sh "/opt/maven/bin/mvn install -fn -Dtest.junit.output.format=xml"
         }
+        post {
+		    always {
+		        junit '**/target/surefire-reports/TEST-*.xml'
+        		archive '**/target/*.jar'
+		    }
+    	}
     }
-    //stage('Results') {
-    //    junit '**/target/surefire-reports/TEST-*.xml'
-    //    archive 'target/*.jar'
-    //}
 }

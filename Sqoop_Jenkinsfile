@@ -7,13 +7,15 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         git branch: 'trunk', url: 'https://github.com/apache/sqoop.git'
     }
     stage('Build') {
-        // Run the maven build without test
-        sh "ant -Dtest.junit.output.format=xml clean package test"
-    }
-    post {
-    always {
-        junit '**/build/test/*.xml'
-        archive 'build/*.jar'
-    }
+        // Run the ant build with test
+        steps {
+        	sh "ant -Dtest.junit.output.format=xml clean package test"
+        }
+        post {
+		    always {
+		        junit '**/build/test/*.xml'
+        		archive 'build/*.jar'
+		    }
+    	}
     }
 }
