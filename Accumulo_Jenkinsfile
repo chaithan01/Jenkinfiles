@@ -21,9 +21,11 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
             //bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
         }
     }
-    stage('Results') {
+    post {
+    always {
         junit '**/target/surefire-reports/TEST-*.xml'
-        archive 'target/*.jar'
+        archive '**/target/*.jar'
+    }
     }
 }
 //}
