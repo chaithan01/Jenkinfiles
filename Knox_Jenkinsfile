@@ -1,4 +1,5 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'master', url: 'https://github.com/apache/knox.git'
