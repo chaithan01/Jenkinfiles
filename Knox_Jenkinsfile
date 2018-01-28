@@ -1,16 +1,15 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+try {
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'master', url: 'https://github.com/apache/knox.git'
     }
     stage('Build') {
         // Run the maven build with test
-       	sh "/opt/maven/bin/mvn clean install -fn"
+       	//sh "/opt/maven/bin/mvn clean install -fn"
     }
+} finally {
+    junit '**/target/surefire-reports/TEST-*.xml'
+    archive '**/target/*.jar'
 }
-post {
-    always {
-	junit '**/target/surefire-reports/TEST-*.xml'
-	archive '**/target/*.jar'
-    }
 }
