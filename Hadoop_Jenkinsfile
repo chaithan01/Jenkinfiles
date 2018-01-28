@@ -16,15 +16,12 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Test') {
         // Run the maven build with test
-        steps {
-	        // Run the maven build with test
-        	sh "/opt/maven/bin/mvn test -fn -Ptest-patch -Pparallel-tests -Pshelltest -Pdist,native -Drequire.libwebhdfs -Drequire.snappy -Drequire.openssl -Drequire.fuse -Drequire.test.libhadoop -Pyarn-ui"
+        // Run the maven build with test
+        try {
+            sh "/opt/maven/bin/mvn test -fn -Ptest-patch -Pparallel-tests -Pshelltest -Pdist,native -Drequire.libwebhdfs -Drequire.snappy -Drequire.openssl -Drequire.fuse -Drequire.test.libhadoop -Pyarn-ui"
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive '**/target/*.jar'
         }
-        post {
-		    always {
-		        junit '**/target/surefire-reports/TEST-*.xml'
-        		archive '**/target/*.jar'
-		    }
-    	}
     }
 }

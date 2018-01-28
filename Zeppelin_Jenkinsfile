@@ -8,15 +8,12 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         sh "/opt/maven/bin/mvn clean install -DskipTests -Pspark-2.0  -Pscala-2.11 -Phadoop-2.7 -Dhadoop.version=2.7.1"
     }
     stage('Test') {
-        steps {
-        	// Run the maven build with test
-        	sh "/opt/maven/bin/mvn clean install -fn -Pspark-2.0  -Pscala-2.11 -Phadoop-2.7 -Dhadoop.version=2.7.1"
+        // Run the maven build with test
+        try {
+            sh "/opt/maven/bin/mvn clean install -fn -Pspark-2.0  -Pscala-2.11 -Phadoop-2.7 -Dhadoop.version=2.7.1"
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive '**/target/*.jar'
         }
-        post {
-		    always {
-		        junit '**/target/surefire-reports/TEST-*.xml'
-        		archive '**/target/*.jar'
-		    }
-    	}
     }
 }

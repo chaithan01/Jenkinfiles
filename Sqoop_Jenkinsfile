@@ -8,14 +8,11 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Build') {
         // Run the ant build with test
-        steps {
-        	sh "ant -Dtest.junit.output.format=xml clean package test"
+        try {
+            sh "ant -Dtest.junit.output.format=xml clean package test"
+        } finally {
+            junit '**/build/test/*.xml'
+            archive 'build/*.jar'
         }
-        post {
-		    always {
-		        junit '**/build/test/*.xml'
-        		archive 'build/*.jar'
-		    }
-    	}
     }
 }

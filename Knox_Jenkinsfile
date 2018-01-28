@@ -5,10 +5,11 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Build') {
         // Run the maven build with test
-       	sh "/opt/maven/bin/mvn clean install -fn"
-    }
-    always {
-	junit '**/target/surefire-reports/TEST-*.xml'
-	archive '**/target/*.jar'
+        try {
+       	    sh "/opt/maven/bin/mvn clean install -fn"
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive '**/target/*.jar'
+        }
     }
 }
