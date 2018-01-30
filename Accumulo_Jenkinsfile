@@ -15,7 +15,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         // Run the maven build
         //sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
         try {
-            sh "/opt/maven/bin/mvn clean install -fn -Dhadx`oop.version=2.7.1"
+            sh "/opt/maven/bin/mvn clean install -fn -Dhadoop.version=2.7.1"
         } finally {
             junit '**/target/surefire-reports/TEST-*.xml'
             archive '**/target/*.jar'
