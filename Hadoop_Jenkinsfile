@@ -1,9 +1,9 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
     environment {
     //    FINDBUGS_HOME=/opt/findbugs
-        //MAVEN_OPTS=-Xmx4g -Xms128m
+        MAVEN_OPTS=-Xmx4g -Xms128m
         //PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/var/lib/jenkins/phantomjs-1/bin
-        //MAVEN_OPTS          =   '-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
+        MAVEN_OPTS          =   '-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
         //JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
     }
     stage('Preparation') {
