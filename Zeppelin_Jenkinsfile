@@ -6,15 +6,16 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         // Get some code from a GitHub repository
         git branch: 'master', url: 'https://github.com/apache/zeppelin.git'
 	sh "git apply /var/lib/jenkins/.m2/repository/patches/zeppelin/*"
-	sh 'if [ "ppc64le" = `uname -p` ]; then export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/2.5.0/lib:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib; fi'
     }
     stage('Compile') {
         // Run the maven build without test
+	sh 'if [ "ppc64le" = `uname -p` ]; then export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/2.5.0/lib:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib; fi'
         sh "/opt/maven/bin/mvn clean install -DskipTests -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip"
     }
     stage('Test') {
         // Run the maven build with test
         try {
+	    sh 'if [ "ppc64le" = `uname -p` ]; then export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/2.5.0/lib:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib; fi'
             sh "/opt/maven/bin/mvn clean install -fn -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip"
         } finally {
             junit '**/target/surefire-reports/TEST-*.xml'
