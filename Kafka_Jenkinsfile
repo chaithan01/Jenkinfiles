@@ -6,6 +6,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'trunk', url: 'https://github.com/apache/kafka.git'
+        sh 'if [ "ppc64le" = `uname -p` ]; then git apply /var/lib/jenkins/.m2/repository/patches/kafka/power*.patch; fi'
     }
     stage('Compile') {
         // bootstrap and download the wrapper
