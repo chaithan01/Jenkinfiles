@@ -1,8 +1,12 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+    environment {
+    	
+    }
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'master', url: 'https://github.com/apache/zeppelin.git'
 	sh "git apply /var/lib/jenkins/.m2/repository/patches/zeppelin/*"
+	sh 'if [ "ppc64le" = `uname -p` ]; then export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/2.5.0/lib:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib; fi'
     }
     stage('Compile') {
         // Run the maven build without test
