@@ -1,6 +1,6 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
     environment {
-    	LD_LIBRARY_PATH=/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/2.5.0/lib:/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib
+    	LD_LIBRARY_PATH=/var/lib/jenkins/.m2/repository/patches/protobuf/proto-bin/3.3.0/lib
     }
     stage('Preparation') {
         // Get some code from a GitHub repository
