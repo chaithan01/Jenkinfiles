@@ -7,7 +7,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
     }
     stage('Compile') {
-        sh "ant -keep-going clean compile tar"
+        sh "ant -keep-going clean compile"
     }
     stage('Test') {
         // Run the ant build with test
