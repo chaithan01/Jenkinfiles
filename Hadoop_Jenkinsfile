@@ -8,7 +8,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     }
     stage('Preparation') {
         // Get some code from a GitHub repository
-        git branch: 'trunk', url: 'https://github.com/apache/hadoop.git'
+        //git branch: 'trunk', url: 'https://github.com/apache/hadoop.git'
     }
     stage('Compile') {
         // Run the maven build without test
