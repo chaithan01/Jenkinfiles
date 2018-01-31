@@ -1,6 +1,6 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
     environment {
-        PATH        =   '$PATH:/var/lib/jenkins/phantomjs-1/bin
+        PATH        =   '$PATH:/var/lib/jenkins/phantomjs-1/bin"
         MAVEN_OPTS  =   '-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=2048m'
         //JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
     }
