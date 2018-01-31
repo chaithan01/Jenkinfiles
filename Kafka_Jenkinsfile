@@ -22,7 +22,10 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
             //sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean testAll --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
             // runs both unit and integration tests
             //sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean test -PscalaVersion=2.12 --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
+        } catch (Exception err) {
+            currentBuild.result = 'UNSTABLE'
         } finally {
+            echo "RESULT: ${currentBuild.result}"
             junit '**/build/test-results/test/*.xml'
             archive '**/build/libs/*.jar'
         }
