@@ -23,8 +23,8 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
             // runs both unit and integration tests
             //sh "./gradlew --no-daemon -PmaxParallelForks=1 -PtestLoggingEvents=started,passed,skipped,failed -PxmlFindBugsReport=true clean test -PscalaVersion=2.12 --continue -Dcheckstyle.config.path=/var/lib/jenkins/workspace/kafka-trunk"
         } finally {
-            junit '**/build/*/*/test/*.xml'
-            archive '**/build/*/*.jar'
+            junit '**/build/test-results/test/*.xml'
+            archive '**/build/libs/*.jar'
         }
     }
 }
