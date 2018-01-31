@@ -1,4 +1,4 @@
-docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z -v /var/lib/jenkins/.cache:/var/lib/jenkins/.cache:rw,z -v /var/lib/jenkins/.gradle:/var/lib/jenkins/.gradle:rw,z") {
     environment {
         MAVEN_OPTS          =   '-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
         //JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
