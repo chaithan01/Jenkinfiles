@@ -1,5 +1,8 @@
 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository") {
     //def mvnHome
+    environment {
+        JAVA_HOME   =   "/usr/bin/java"
+    }
     stage('Preparation') { // for display purposes
         //sh 'which mvn'
         //sh 'pwd'
