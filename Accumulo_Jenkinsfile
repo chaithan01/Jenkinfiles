@@ -12,7 +12,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         //mvnHome = tool 'M3'
     }
     stage('Compile') {
-        sh 'if [ "ppc64le" = `uname -p` ]; then export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-ppc64el/; else export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/; fi;             /opt/maven/bin/mvn clean install -DskipTests -Dhadoop.version=2.7.1"
+        sh 'if [ "ppc64le" = `uname -p` ]; then export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-ppc64el/; else export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/; fi;             /opt/maven/bin/mvn clean install -DskipTests -Dhadoop.version=2.7.1'
     }
     stage('Test') {
         // Run the maven build
