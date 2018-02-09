@@ -7,6 +7,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'trunk', url: 'https://github.com/apache/hadoop.git'
+        sh 'if [ "ppc64le" = `uname -p` ]; then git apply /var/lib/jenkins/.m2/repository/patches/hadoop/power*.patch; fi'
     }
     stage('Compile') {
         // Run the maven build without test
