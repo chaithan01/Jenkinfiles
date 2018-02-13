@@ -33,7 +33,7 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
                 else
                     export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
                 fi
-                /opt/maven/bin/mvn install -fn
+                /opt/maven/bin/mvn test -fn
             '''
         } finally {
             junit '**/target/surefire-reports/TEST-*.xml'
