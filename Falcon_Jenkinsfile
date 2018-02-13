@@ -2,7 +2,12 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     stage('Preparation') {
         // Get some code from a GitHub repository
         git branch: 'master', url: 'https://github.com/apache/falcon.git'
-        sh 'if [ "ppc64le" = `uname -p` ]; then git apply /var/lib/jenkins/.m2/repository/patches/falcon/power*.patch; fi'
+        sh '''
+            if [ "ppc64le" = `uname -p` ]
+            then
+                git apply /var/lib/jenkins/.m2/repository/patches/falcon/power*.patch
+            fi
+        '''
     }
     stage('Compile') {
         // Run the maven build without test
