@@ -10,7 +10,15 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
     stage('Test') {
         // Run the maven build with test
         try {
-            sh "/opt/maven/bin/mvn install -fn -Dcheckstyle.skip"
+            sh '''
+                if [ "ppc64le" = `uname -p` ]
+                then
+                    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-ppc64el/
+                else
+                    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+                fi
+                /opt/maven/bin/mvn install -fn -Dcheckstyle.skip
+            '''
         } finally {
             junit '**/target/surefire-reports/TEST-*.xml'
             archive '**/target/*.jar'
