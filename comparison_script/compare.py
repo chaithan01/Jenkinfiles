@@ -5,6 +5,17 @@ from yattag import Doc, indent
 copyfile("./helper.js", "/var/www/html/helper.js")
 
 
+def getResultImage(res) :
+	ur = "https://builds.apache.org/static/53471590/images/48x48/{0}.png"
+	if res == "UNSTABLE" :
+		return ur.format('yellow')
+	if res == "SUCCESS" :
+		return ur.format('blue')
+	if res == "FAILURE" :
+		return ur.format('red')
+	if res == "ABORTED" :
+		return ur.format('aborted')
+
 def getFailures(url) :
 	testNames = []
 	testErrs = []
@@ -39,7 +50,6 @@ for job in resp.json()['jobs'] :
 
 
 
-data = {}
 with tag('html'):
 	with tag('head'):
 		with tag('style'):
@@ -54,6 +64,9 @@ with tag('html'):
 				with tag('div'):
 					with tag('a', href='#', id='anchor_'+key, onclick="showme(this.id);"):
 						text(key.upper()+' SUMMARY')
+			with tag('div'):
+				with tag('a', href='#', id='anchor_ppcx86', onclick="showme(this.id);"):
+					text('FULL SUMMARY')
 			with tag('div'):
 				text('=============')
 				
@@ -115,7 +128,7 @@ with tag('html'):
 								with tag('th'):
 									text('PPC')
 								with tag('th'):
-									text('x86')
+									text('X86')
 							#summary
 							with tag('tr'):
 								with tag('td'):
@@ -180,8 +193,12 @@ with tag('html'):
 								with tag('td'):
 									text('Result')
 								with tag('td'):
+									with tag('img', src=getResultImage(ppc_lastBuild['result']),align='top',style="width: 16px; height: 16px;"):
+											text()
 									text(ppc_lastBuild['result'])
-								with tag('td'):				
+								with tag('td'):
+									with tag('img', src=getResultImage(x86_lastBuild['result']),align='top',style="width: 16px; height: 16px; "):
+											text()
 									text(x86_lastBuild['result'])
 							#Failures
 							ppc_tests, ppc_testErrs, x86_tests, x86_testErrs = [], [], [], []
@@ -200,8 +217,8 @@ with tag('html'):
 								with tag('td'):
 									with tag('ol'):
 										for t in ppc_tests :
-											with tag('li'):
-												with tag('div'):
+											with tag('div'):
+												with tag('li'):
 													text(t)
 								with tag('td') :
 									with tag('ol'):
@@ -304,13 +321,69 @@ with tag('html'):
 										with tag('a', href='#', id='anchor_'+summary_detail['job'], onclick="showme(this.id);"):
 											text(summary_detail['name'])
 									with tag('td'):
+										with tag('img', src=getResultImage(summary_detail['result']),align='top',style="width: 16px; height: 16px;"):
+											text()
 										text(summary_detail['result'])
 									with tag('td'):
 										text(summary_detail['failed'])
 									with tag('td'):
 										text(summary_detail['unique'])
+										
+			#full summary
+			with tag('div', id='ppcx86', name='summary', style="display:none") :
+				with tag('h2') :
+					with tag('center') :
+						text('FULL SUMMARY')
+				with tag('table',width="100%",border="1",cellspacing="0",cellpadding="0"):
+					with tag('tbody'):
+						#header
+						with tag('tr'):
+							with tag('th'):
+								text()
+							with tag('th',colspan=2):
+								text('Result')
+							with tag('th',colspan=2):
+								text('Failed Count')
+							with tag('th',colspan=2):
+								text('Unique Count')
+						with tag('tr'):
+							with tag('th'):
+								text('Package Name')
+							with tag('th'):
+								text('PPC')
+							with tag('th'):
+								text('X86')
+							with tag('th'):
+								text('PPC')
+							with tag('th'):
+								text('X86')
+							with tag('th'):
+								text('PPC')
+							with tag('th'):
+								text('X86')
+						for ppc_summary_detail,x86_summary_detail in zip(summary['ppc'],summary['x86']):
+							with tag('tr'):
+								with tag('td'):
+									with tag('a', href='#', id='anchor_'+ppc_summary_detail['job'], onclick="showme(this.id);"):
+										text(ppc_summary_detail['name'])
+								with tag('td'):
+									with tag('img', src=getResultImage(ppc_summary_detail['result']),align='top',style="width: 16px; height: 16px;"):
+										text()
+									text(ppc_summary_detail['result'])
+								with tag('td'):
+									with tag('img', src=getResultImage(x86_summary_detail['result']),align='top',style="width: 16px; height: 16px;"):
+										text()
+									text(x86_summary_detail['result'])
+								with tag('td'):
+									text(ppc_summary_detail['failed'])
+								with tag('td'):
+									text(x86_summary_detail['failed'])
+								with tag('td'):
+									text(ppc_summary_detail['unique'])
+								with tag('td'):
+									text(x86_summary_detail['unique'])
 					
 result = doc.getvalue()
-print "Writing result to a file at /var/www/html/test.html"
-with open('/var/www/html/test.html','w') as afile :
+print "Writing result to a file at /var/www/html/ci_report.html"
+with open('/var/www/html/ci_report.html','w') as afile :
 	afile.write(result.encode('utf-8'))
