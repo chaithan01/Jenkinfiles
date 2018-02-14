@@ -1,4 +1,4 @@
-docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository -p 39397:39397") {
+docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository") {
     //def mvnHome
     stage('Preparation') { // for display purposes
         //sh 'which mvn'
