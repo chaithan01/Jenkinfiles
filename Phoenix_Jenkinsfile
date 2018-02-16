@@ -11,6 +11,8 @@ docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenk
         // Run the maven build with test
         try {
             sh "/opt/maven/bin/mvn install -fn -Dtest.junit.output.format=xml"
+        } catch (Exception err) {
+            currentBuild.result = 'UNSTABLE'
         } finally {
             junit '**/target/surefire-reports/TEST-*.xml'
             archive '**/target/*.jar'
