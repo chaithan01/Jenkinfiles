@@ -6,14 +6,14 @@ for (x in labels) {
         node(label) {
             docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
                 stage('Prepare ' + label) {
-                    git branch: 'master', url: 'https://github.com/apache/knox.git'
+                    git branch: 'master', url: 'https://github.com/apache/phoenix.git'
                 }
                 stage('Compile ' + label) {
                     sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
                     try {
-                        sh "/opt/maven/bin/mvn clean install -fn"
+                        sh "/opt/maven/bin/mvn test -fn -Dtest.junit.output.format=xml"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
