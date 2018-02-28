@@ -2,6 +2,10 @@ import requests, json
 from shutil import copyfile
 from yattag import Doc, indent
 
+
+from datetime import datetime
+startTime = datetime.now()
+
 copyfile("./helper.js", "/var/www/html/helper.js")
 
 
@@ -24,7 +28,7 @@ def getFailures(url) :
 	for test in testresult['suites'] :
 		for case in test['cases'] :
 			if case['status'] != 'PASSED' and case['status'] != 'SKIPPED' and case['status'] != 'FIXED':
-				testNames.append(case['name']+":"+case['className'])
+				testNames.append(case['className']+"."+case['name'])
 				if case['errorDetails'] :
 					testErrs.append(case['errorDetails'][:400])
 				else :
@@ -56,7 +60,7 @@ with tag('html'):
 			text('table, th, td { border: 1px solid black; vertical-align:top; padding: 3px} table {table-layout:fixed} td {word-wrap:break-word} th{background-color: DodgerBlue; color: white;}')
 
 		with tag('script', src='helper.js') :
-			text('function hideAll(){console.log("hideAll")}function showme(clicked){console.log("showme");var idVal=clicked.substring(7);var all=document.getElementsByName("data");var i;for(i=0;i<all.length;i++){all[i].style.display="none"}var allSum=document.getElementsByName("summary");for(i=0;i<allSum.length;i++){allSum[i].style.display="none"}document.getElementById(idVal).style.display="block"}')
+			text('function hideAll(){console.log("hideAll")}function showme(e){console.log("showme");var l,n=e.substring(7),o=document.getElementsByName("data");for(l=0;l<o.length;l++)o[l].style.display="none";var t=document.getElementsByName("summary");for(l=0;l<t.length;l++)t[l].style.display="none";document.getElementById(n).style.display="block"}')
 
 	with tag('body', onload="hideAll();"):
 		with tag('div',style="display: table-cell; width: 140px"):
@@ -135,6 +139,11 @@ with tag('html'):
 									text('Summary')
 								with tag('td'):
 									revHash, revName = "", ""
+									tDelta = str(datetime.now() - datetime.fromtimestamp(ppc_lastBuild['timestamp']/1000))
+									if ',' in tDelta :
+										tDelta = tDelta.split(':')[0] + " hr"
+									else :
+										tDelta = tDelta.split(':')[0] + " hr, " + tDelta.split(':')[1] + " min"
 									for action in ppc_lastBuild['actions'] :
 										if action and action['_class'] == "hudson.tasks.junit.TestResultAction" :
 											with tag('div') :
@@ -160,8 +169,15 @@ with tag('html'):
 										text('Branch Details: {0}'.format(revName))
 									with tag('div') :
 										text('Last Revision: {0}'.format(revHash))
+									with tag('div') :
+										text('Last Run: {0}'.format(tDelta))
 								with tag('td'):
 									revHash, revName = "", ""
+									tDelta = str(datetime.now() - datetime.fromtimestamp(x86_lastBuild['timestamp']/1000))
+									if ',' in tDelta :
+										tDelta = tDelta.split(':')[0] + " hr"
+									else :
+										tDelta = tDelta.split(':')[0] + " hr, " + tDelta.split(':')[1] + " min"
 									for action in x86_lastBuild['actions'] :
 										if action and action['_class'] == "hudson.tasks.junit.TestResultAction" :
 											with tag('div') :
@@ -188,6 +204,8 @@ with tag('html'):
 										text('Branch Details: {0}'.format(revName))
 									with tag('div') :
 										text('Last Revision: {0}'.format(revHash))
+									with tag('div') :
+										text('Last Run: {0}'.format(tDelta))
 							#Status
 							with tag('tr'):
 								with tag('td'):
@@ -387,3 +405,5 @@ result = doc.getvalue()
 print "Writing result to a file at /var/www/html/ci_report.html"
 with open('/var/www/html/ci_report.html','w') as afile :
 	afile.write(result.encode('utf-8'))
+
+print 'The script took {0}'.format(datetime.now() - startTime)
