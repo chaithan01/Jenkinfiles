@@ -1,4 +1,4 @@
-def labels = ['x86ubun16', 'x86rhel7', 'ppcrhel7']
+def labels = ['x86ub16', 'x86rh7', 'ppcrh7']
 def builders = [:]
 for (x in labels) {
     def label = x
