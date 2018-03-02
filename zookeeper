@@ -1,0 +1,31 @@
+def labels = ['x86ub16', 'x86rh7', 'ppcub16', 'ppcrh7']
+def builders = [:]
+for (x in labels) {
+    def label = x
+    builders[label] = {
+        node(label) {
+            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                environment {
+                    JAVA_TOOL_OPTIONS = "-Xmx4G -XX:MaxPermSize=4G -Xms1G"
+                }
+                stage('Prepare ' + label) {
+                    git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
+                }
+                stage('Compile ' + label) {
+                    sh "ant -keep-going clean compile"
+                }
+                stage('Test ' + label) {
+                    try {
+                        sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
+                    }  catch (Exception err) {
+                        currentBuild.result = 'UNSTABLE'
+                    } finally {
+                        junit 'build/test/logs/*.xml'
+                        archive 'build/*.jar'
+                    }
+                }
+            }
+        }
+    }
+}
+parallel builders
