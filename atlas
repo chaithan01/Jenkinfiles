@@ -5,6 +5,9 @@ for (x in labels) {
     builders[label] = {
         node(label) {
             docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                environment {
+                    MAVEN_OPTS='-Xmx1500m -Xms1500m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8'
+                }
                 stage('Prepare ' + label) {
                     git branch: 'master', url: 'https://github.com/apache/atlas.git'
                     sh '''
@@ -15,15 +18,11 @@ for (x in labels) {
                     '''
                 }
                 stage('Compile ' + label) {
-                    withEnv(MAVEN_OPTS='-Xmx1500m -Xms1500m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8') {
-					    sh "mvn clean install -DskipTests"
-                    }
+                    sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
                     try {
-					    withEnv(MAVEN_OPTS='-Xmx1500m -Xms1500m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8') {
-							sh "/opt/maven/bin/mvn test -fn"
-						}
+                        sh "/opt/maven/bin/mvn test -fn"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
