@@ -1,0 +1,27 @@
+def labels = ['x86ub16', 'x86rh7', 'ppcub16', 'ppcrh7']
+def builders = [:]
+for (x in labels) {
+    def label = x
+    builders[label] = {
+        node(label) {
+            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                stage('Prepare ' + label) {
+                    git branch: 'master', url: 'https://github.com/apache/zeppelin.git'
+                    sh "git apply /var/lib/jenkins/.m2/repository/patches/zeppelin/*"
+                }
+                stage('Compile ' + label) {
+                    sh "mvn clean install -DskipTests -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip"
+                }
+                stage('Test ' + label) {
+                    try {
+                        sh "mvn verify -fn -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip"
+                    } finally {
+                        junit '**/target/surefire-reports/TEST-*.xml'
+                        archive '**/target/*.jar'
+                    }
+                }
+            }
+        }
+    }
+}
+parallel builders
