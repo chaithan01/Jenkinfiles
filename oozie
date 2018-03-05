@@ -13,8 +13,10 @@ for (x in labels) {
                 }
                 stage('Test ' + label) {
                     try {
-		    	export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
-                        mvn test -fn -Dcheckstyle.skip
+		    	        sh '''
+		    	            export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
+                       	    mvn test -fn -Dcheckstyle.skip
+                        '''
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
