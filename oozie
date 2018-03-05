@@ -13,8 +13,8 @@ for (x in labels) {
                 }
                 stage('Test ' + label) {
                     try {
-		    	        sh '''
-		    	            export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
+                        sh '''
+                            export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
                        	    mvn test -fn -Dcheckstyle.skip
                         '''
                     } finally {
