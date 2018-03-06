@@ -9,10 +9,7 @@ for (x in labels) {
                     git branch: 'master', url: 'https://github.com/apache/hbase.git'
                 }
                 stage('Compile ' + label) {
-                    sh '''
-                        export LD_LIBRARY_PATH=/usr/local/lib
-                        mvn clean install -DskipTests
-                    '''
+                    sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
                     try {
