@@ -11,12 +11,6 @@ for (x in labels) {
     builders[label] = {
         node(label) {
             docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
-                environment {
-                    
-                    
-                    
-                    PATH=/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin
-                }
                 stage('Prepare ' + label) {
                     git branch: 'trunk', url: 'https://github.com/apache/hadoop'
                     sh '''
@@ -27,15 +21,23 @@ for (x in labels) {
                     '''
                 }
                 stage('Compile ' + label) {
-                    withEnv(['FINDBUGS_HOME=/opt/findbugs','MAVEN_OPTS=-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m','JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/','PATH=/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin']) {
-					    sh 'mvn clean install -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui -DskipTests'
-                    }
+                    sh '''
+                        export FINDBUGS_HOME='/opt/findbugs'
+                        export MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
+                        export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
+                        export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
+                        mvn clean install -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui -DskipTests'
+					'''
                 }
                 stage('Test ' + label) {
                     try {
-                        withEnv(['FINDBUGS_HOME=/opt/findbugs','MAVEN_OPTS=-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m','JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/','PATH=/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin']) {
-                            sh 'mvn test -fn -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui'
-                        }
+                        sh '''
+                            export FINDBUGS_HOME='/opt/findbugs'
+                            export MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
+                            export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
+                            export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
+                            mvn test -fn -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui'
+                        '''
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
