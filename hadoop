@@ -1,0 +1,43 @@
+properties([parameters([text(defaultValue: '''x86ub16
+x86rh7
+ppcub16
+ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
+H 1 * * 3''')])])
+def labels = nodelabels.split("\\r?\\n")
+def builders = [:]
+for (x in labels) {
+    def label = x
+    builders[label] = {
+        node(label) {
+            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                environment {
+                    FINDBUGS_HOME='/opt/findbugs'
+                    MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
+                    JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
+                    PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
+                }
+                stage('Prepare ' + label) {
+                    git branch: 'trunk', url: 'https://github.com/apache/hadoop'
+                    sh '''
+                        if [ "ppc64le" = `uname -p` ]
+                        then
+                            git apply /var/lib/jenkins/.m2/repository/patches/hadoop/power*.patch
+                        fi
+                    '''
+                }
+                stage('Compile ' + label) {
+                    sh 'mvn clean install -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui -DskipTests'
+                }
+                stage('Test ' + label) {
+                    try {
+                        sh 'mvn test -fn -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui'
+                    } finally {
+                        junit '**/target/surefire-reports/TEST-*.xml'
+                        archive '**/target/*.jar'
+                    }
+                }
+            }
+        }
+    }
+}
+parallel builders
