@@ -1,4 +1,10 @@
-def labels = ['x86ub16', 'x86rh7', 'ppcub16', 'ppcrh7']
+properties([disableConcurrentBuilds(),  parameters([text(defaultValue: '''x86ub16
+x86rh7
+ppcub16
+ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
+H 3 * * 5''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
+
+def labels = nodelabels.split("\\r?\\n")
 def builders = [:]
 for (x in labels) {
     def label = x
