@@ -19,7 +19,11 @@ for (x in labels) {
                 }
                 stage('Test ' + label) {
                     try {
-                        sh "mvn clean install -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr -fn"
+                        sh '''
+                            export MAVEN_OPTS=-Xmx5g -Xms128m -XX:MaxPermSize=512m
+                            export JAVA_TOOL_OPTIONS=-Xmx5g -XX:MaxPermSize=512m -Xms128m
+                            mvn clean install -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr -fn
+                        '''
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
