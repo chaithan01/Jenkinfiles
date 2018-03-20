@@ -20,7 +20,7 @@ for (x in labels) {
                 }
                 stage('Test ' + label) {
                     try {
-                        sh "mvn verify -fn -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip"
+                        sh "mvn verify -fn -Pspark-2.0  -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip -Djava.io.tmpdir=/tmp"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
