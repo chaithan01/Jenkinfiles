@@ -13,14 +13,14 @@ for (x in labels) {
             docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
                 stage('Prepare ' + label) {
                     git branch: 'master', url: 'https://github.com/apache/falcon.git'
-                    git apply /var/lib/jenkins/.m2/repository/patches/falcon/*.patch
+                    sh "git apply /var/lib/jenkins/.m2/repository/patches/falcon/*.patch"
                 }
                 stage('Compile ' + label) {
                     sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
                     try {
-					    sh "/opt/maven/bin/mvn test -fn"
+                        sh "/opt/maven/bin/mvn test -fn"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
