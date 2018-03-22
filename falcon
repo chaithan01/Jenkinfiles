@@ -13,12 +13,7 @@ for (x in labels) {
             docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
                 stage('Prepare ' + label) {
                     git branch: 'master', url: 'https://github.com/apache/falcon.git'
-                    sh '''
-                        if [ "ppc64le" = `uname -p` ]
-                        then
-                            git apply /var/lib/jenkins/.m2/repository/patches/falcon/power*.patch
-                        fi
-                    '''
+                    git apply /var/lib/jenkins/.m2/repository/patches/falcon/*.patch
                 }
                 stage('Compile ' + label) {
                     sh "mvn clean install -DskipTests"
