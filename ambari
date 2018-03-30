@@ -14,11 +14,11 @@ for (x in labels) {
                     checkout([$class: 'GitSCM', branches: [[name: 'trunk']], userRemoteConfigs: [[url: 'https://github.com/apache/ambari/']]])
                 }
                 stage('Compile ' + label) {
-                    sh "mvn clean install -DskipTests"
+                    sh "mvn clean install -DskipTests -Dcheckstyle.skip"
                 }
                 stage('Test ' + label) {
                     try {
-                        sh "/opt/maven/bin/mvn test -fn"
+                        sh "mvn test -fn -Dcheckstyle.skip"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
