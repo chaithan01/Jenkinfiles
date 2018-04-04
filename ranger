@@ -1,4 +1,4 @@
-properties([disableConcurrentBuilds(),  parameters([text(defaultValue: '''x86ub16
+properties([parameters([text(defaultValue: '''x86ub16
 x86rh7
 ppcub16
 ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
