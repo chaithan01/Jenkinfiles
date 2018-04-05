@@ -15,13 +15,13 @@ for (x in labels) {
                     git branch: 'master', url: 'https://github.com/apache/oozie.git'
                 }
                 stage('Compile ' + label) {
-                    sh "mvn clean install -DskipTests -Dcheckstyle.skip"
+                    sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
                     try {
                         sh '''
                             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
-                       	    mvn test -fn -Dcheckstyle.skip
+                       	    mvn test -fn
                         '''
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'

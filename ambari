@@ -19,12 +19,12 @@ for (x in labels) {
                         mkdir -p /var/lib/jenkins/workspace/ambari/ambari-metrics/ambari-metrics-timelineservice/target/embedded/
                         cp /var/lib/jenkins/.m2/repository/patches/ambari/hbase-2.0.0.3.0.0.2-97-bin.tar.gz /var/lib/jenkins/workspace/ambari/ambari-metrics/ambari-metrics-timelineservice/target/embedded/hbase.tar.gz
                         cp /var/lib/jenkins/.m2/repository/patches/ambari/phoenix-5.0.0.3.0.0.2-97.tar.gz /var/lib/jenkins/workspace/ambari/ambari-metrics/ambari-metrics-timelineservice/target/embedded/phoenix.tar.gz
-                        mvn install -DskipTests -Dcheckstyle.skip
+                        mvn install -DskipTests
                     '''
                 }
                 stage('Test ' + label) {
                     try {
-                        sh "mvn test -fn -Dcheckstyle.skip"
+                        sh "mvn test -fn"
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
