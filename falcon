@@ -21,7 +21,7 @@ for (x in labels) {
                     }
                     stage('Test ' + label) {
                         try {
-                            sh "mvn clean install -fn"
+                            sh "mvn test -fn"
                         } finally {
                             junit '**/target/surefire-reports/TEST-*.xml'
                             archive '**/target/*.jar'
