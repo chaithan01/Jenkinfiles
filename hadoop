@@ -36,6 +36,7 @@ for (x in labels) {
                 }
             }
             stage('Report ' + label) {
+                sh 'pwd'
                 junit '**/target/surefire-reports/TEST-*.xml'
                 archive '**/target/*.jar'
             }
