@@ -20,15 +20,6 @@ for (x in labels) {
                         fi
                     '''
                 }
-                stage('Compile ' + label) {
-                    sh '''
-                        export FINDBUGS_HOME='/opt/findbugs'
-                        export MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
-                        export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
-                        export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
-                        mvn clean install -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui -DskipTests
-					'''
-                }
                 stage('Test ' + label) {
                     try {
                         sh '''
@@ -36,13 +27,17 @@ for (x in labels) {
                             export MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
                             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
                             export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
+                            cd hadoop-hdfs-project/hadoop-hdfs-native-client
                             mvn test -fn -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.libwebhdfs  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui
                         '''
                     } finally {
-                        junit '**/target/surefire-reports/TEST-*.xml'
-                        archive '**/target/*.jar'
+                        
                     }
                 }
+            }
+            stage('Report ' + label) {
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archive '**/target/*.jar'
             }
         }
     }
