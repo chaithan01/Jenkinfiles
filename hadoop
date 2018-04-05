@@ -28,7 +28,7 @@ for (x in labels) {
                             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
                             export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
                             cd hadoop-hdfs-project/hadoop-hdfs-native-client
-                            mvn test -fn -Ptest-patch  -Pparallel-tests  -Pshelltest -Pdist,native  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse  -Drequire.test.libhadoop  -Pyarn-ui
+                            mvn test -fn -Pdist,native  -Drequire.snappy  -Drequire.openssl  -Drequire.fuse -Drequire.test.libhadoop  -Pyarn-ui
                         '''
                     } finally {
                         
