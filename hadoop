@@ -20,14 +20,14 @@ for (x in labels) {
                         fi
                     '''
                 }
-                stage('Test ' + label) {
+                stage('Compile ' + label) {
                     try {
                         sh '''
                             export FINDBUGS_HOME='/opt/findbugs'
                             export MAVEN_OPTS='-Xmx4g -Xms128m -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
                             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
                             export PATH='/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/phantomjs-1/bin'
-                            mvn test -fn -Pdist,native -Drequire.snappy -Drequire.openssl -Drequire.fuse -Drequire.test.libhadoop -Pyarn-ui
+                            mvn clean install -DskipTests -fn -Pdist,native -Drequire.snappy -Drequire.openssl -Drequire.fuse -Drequire.test.libhadoop -Pyarn-ui
                         '''
                     } finally {
                         
