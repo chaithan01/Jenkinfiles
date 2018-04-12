@@ -9,7 +9,7 @@ def builders = [:]
 for (x in labels) {
     def label = x
     builders[label] = {
-        timeout(120) {
+        timeout(180) {
             node(label) {
                 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
                     stage('Prepare ' + label) {
