@@ -1,4 +1,4 @@
-properties([parameters([text(defaultValue: '''x86ub16
+properties([disableConcurrentBuilds(),  parameters([text(defaultValue: '''x86ub16
 x86rh7
 ppcub16
 ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
@@ -9,7 +9,7 @@ def builders = [:]
 for (x in labels) {
     def label = x
     builders[label] = {
-        timeout(180) {
+        timeout(240) {
             node(label) {
                 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
                     stage('Prepare ' + label) {
