@@ -15,6 +15,7 @@ for (x in labels) {
                     git branch: 'master', url: 'https://github.com/apache/oozie.git'
                 }
                 stage('Compile ' + label) {
+                    sh "env"
                     sh "mvn clean install -DskipTests"
                 }
                 stage('Test ' + label) {
