@@ -19,14 +19,14 @@ for (x in labels) {
                     stage('Compile ' + label) {
                         sh '''
                             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
-                            mvn clean install -DskipTests -Pspark-2.0 -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip
+                            mvn clean install -DskipTests -Pspark-2.0 -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip -Dcheckstyle.skip
                         '''
                     }
                     stage('Test ' + label) {
                         try {
                             sh '''
                                 export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
-                                mvn verify -fn -Pspark-2.0 -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip -Djava.io.tmpdir=/tmp
+                                mvn verify -fn -Pspark-2.0 -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip -Djava.io.tmpdir=/tmp -Dcheckstyle.skip
                             '''
                         } finally {
                             junit '**/target/surefire-reports/TEST-*.xml'
