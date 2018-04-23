@@ -18,7 +18,6 @@ for (x in labels) {
                         then
                             git apply /var/lib/jenkins/.m2/repository/patches/hadoop/power*.patch
                         fi
-                        git apply /var/lib/jenkins/patches/hadoop-patch/ppc-bswap-fix.patch
                     '''
                 }
                 stage('Compile ' + label) {
