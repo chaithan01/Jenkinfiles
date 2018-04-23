@@ -50,7 +50,7 @@ for (x in labels) {
                                 echo 'Editing for OOM issue in jenkins..'
 	                            echo $i
                                 file=`find -iname TEST-*.xml -exec du -sh {} + | grep $i | awk '{print $2}'`
-                                sed -i -e '/<system-out>/,/<\/system-out>/{
+                                sed -i -e '/<system-out>/,/<\\/system-out>/{
 		                            /<\/system-out>/i\
 		                            <system-out>contents replaced by custom script please contact yussuf<\/system-out>
 		                            d
