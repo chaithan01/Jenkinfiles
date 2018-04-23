@@ -42,6 +42,21 @@ for (x in labels) {
                             mvn test -fn -Pdist,native -Drequire.snappy -Drequire.openssl -Drequire.fuse -Drequire.test.libhadoop -Pyarn-ui
                         '''
                     } finally {
+                        sh '''
+                            find -iname TEST-*.xml -exec touch {} +
+                            bigfile=`find -iname TEST-*.xml -exec du -sh {} + | awk '{print $1}' | grep M`
+                            for i in $bigfile
+                            do
+                                echo 'Editing for OOM issue in jenkins..'
+	                            echo $i
+                                file=`find -iname TEST-*.xml -exec du -sh {} + | grep $i | awk '{print $2}'`
+                                sed -i -e '/<system-out>/,/<\/system-out>/{
+		                            /<\/system-out>/i\
+		                            <system-out>contents replaced by custom script please contact yussuf<\/system-out>
+		                            d
+		                        }' $file
+                            done
+                        '''
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
                     }
