@@ -42,7 +42,6 @@ for (x in labels) {
                         '''
                     } finally {
                         sh '''
-                            find -iname TEST-*.xml -exec touch {} +
                             bigfile=`find -iname TEST-*.xml -exec du -sh {} + | awk '{print $1}' | grep M`
                             for i in $bigfile
                             do
