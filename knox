@@ -12,38 +12,28 @@ for (x in labels) {
     builders[label] = {
         node(label) {
             if (label == 'ppcrh75') {
-                stage('Prepare ' + label) {
-                    git branch: 'master', url: 'https://github.com/apache/knox.git'
-                }
-                stage('Compile ' + label) {
-                    sh "mvn clean install -DskipTests"
-                }
-                stage('Test ' + label) {
-                    try {
-                        sh "/opt/maven/bin/mvn clean install -fn"
-                    } finally {
-                        junit '**/target/surefire-reports/TEST-*.xml'
-                        archive '**/target/*.jar'
-                    }
-                }
+                runStages(label)
             } else {
                 docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
-                    stage('Prepare ' + label) {
-                        git branch: 'master', url: 'https://github.com/apache/knox.git'
-                    }
-                    stage('Compile ' + label) {
-                        sh "mvn clean install -DskipTests"
-                    }
-                    stage('Test ' + label) {
-                        try {
-                            sh "/opt/maven/bin/mvn clean install -fn"
-                        } finally {
-                            junit '**/target/surefire-reports/TEST-*.xml'
-                            archive '**/target/*.jar'
-                        }
-                    }
+                    runStages(label)
                 }
             }
+        }
+    }
+}
+def runStages(label) {
+    stage('Prepare ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/knox.git'
+    }
+    stage('Compile ' + label) {
+        sh "mvn clean install -DskipTests"
+    }
+    stage('Test ' + label) {
+        try {
+            sh "/opt/maven/bin/mvn clean install -fn"
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive '**/target/*.jar'
         }
     }
 }
