@@ -11,7 +11,7 @@ for (x in labels) {
     def label = x
     builders[label] = {
         node(label) {
-            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+            if (label == 'ppcrh75') {
                 stage('Prepare ' + label) {
                     git branch: 'master', url: 'https://github.com/apache/knox.git'
                 }
@@ -24,6 +24,23 @@ for (x in labels) {
                     } finally {
                         junit '**/target/surefire-reports/TEST-*.xml'
                         archive '**/target/*.jar'
+                    }
+                }
+            } else {
+                docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                    stage('Prepare ' + label) {
+                        git branch: 'master', url: 'https://github.com/apache/knox.git'
+                    }
+                    stage('Compile ' + label) {
+                        sh "mvn clean install -DskipTests"
+                    }
+                    stage('Test ' + label) {
+                        try {
+                            sh "/opt/maven/bin/mvn clean install -fn"
+                        } finally {
+                            junit '**/target/surefire-reports/TEST-*.xml'
+                            archive '**/target/*.jar'
+                        }
                     }
                 }
             }
