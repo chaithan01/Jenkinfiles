@@ -1,7 +1,8 @@
 properties([parameters([text(defaultValue: '''x86ub16
 x86rh7
 ppcub16
-ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
+ppcrh7
+ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 9 * * 4''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
 
 def labels = nodelabels.split("\\r?\\n")
@@ -10,25 +11,32 @@ for (x in labels) {
     def label = x
     builders[label] = {
         node(label) {
-            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z -v /var/lib/jenkins/.cache:/var/lib/jenkins/.cache:rw,z -v /var/lib/jenkins/.gradle:/var/lib/jenkins/.gradle:rw,z") {
-                environment {
-                    PATH = '$PATH:/opt/phantomjs-1/bin/'
-                }
-                stage('Prepare ' + label) {
-                    git branch: 'master', url: 'https://github.com/apache/tez.git'
-                }
-                stage('Compile ' + label) {
-                    sh "mvn clean install -DskipTests -Dtar"
-                }
-                stage('Test ' + label) {
-                    try {
-                        sh "mvn test -fn"
-                    } finally {
-                        junit '**/target/surefire-reports/TEST-*.xml'
-                        archive 'target/*.jar'
-                    }
+            if (label == 'ppcrh75') {
+                runStages(label)
+            } else {
+                docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z -v /var/lib/jenkins/.cache:/var/lib/jenkins/.cache:rw,z -v /var/lib/jenkins/.gradle:/var/lib/jenkins/.gradle:rw,z") {
+                    runStages(label)
                 }
             }
+        }
+    }
+}
+def runStages(label) {
+    environment {
+        PATH = '$PATH:/opt/phantomjs-1/bin/'
+    }
+    stage('Prepare ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/tez.git'
+    }
+    stage('Compile ' + label) {
+        sh "mvn clean install -DskipTests -Dtar"
+    }
+    stage('Test ' + label) {
+        try {
+            sh "mvn test -fn"
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archive 'target/*.jar'
         }
     }
 }

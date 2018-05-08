@@ -1,7 +1,8 @@
 properties([parameters([text(defaultValue: '''x86ub16
 x86rh7
 ppcub16
-ppcrh7''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
+ppcrh7
+ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 9 * * 5''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
 
 def labels = nodelabels.split("\\r?\\n")
@@ -10,27 +11,34 @@ for (x in labels) {
     def label = x
     builders[label] = {
         node(label) {
-            docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
-                environment {
-                    JAVA_TOOL_OPTIONS = "-Xmx4G -XX:MaxPermSize=4G -Xms1G"
-                }
-                stage('Prepare ' + label) {
-                    git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
-                }
-                stage('Compile ' + label) {
-                    sh "ant -keep-going clean compile"
-                }
-                stage('Test ' + label) {
-                    try {
-                        sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
-                    }  catch (Exception err) {
-                        currentBuild.result = 'UNSTABLE'
-                    } finally {
-                        junit 'build/test/logs/*.xml'
-                        archive 'build/*.jar'
-                    }
+            if (label == 'ppcrh75') {
+                runStages(label)
+            } else {
+                docker.image('base:v1').inside("-v /var/lib/jenkins/.m2/repository:/var/lib/jenkins/.m2/repository:rw,z") {
+                    runStages(label)
                 }
             }
+        }
+    }
+}
+def runStages(label) {
+    environment {
+        JAVA_TOOL_OPTIONS = "-Xmx4G -XX:MaxPermSize=4G -Xms1G"
+    }
+    stage('Prepare ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
+    }
+    stage('Compile ' + label) {
+        sh "ant -keep-going clean compile"
+    }
+    stage('Test ' + label) {
+        try {
+            sh "ant -Dtest.junit.output.format=xml -keep-going clean compile test-core-java"
+        }  catch (Exception err) {
+            currentBuild.result = 'UNSTABLE'
+        } finally {
+            junit 'build/test/logs/*.xml'
+            archive 'build/*.jar'
         }
     }
 }
