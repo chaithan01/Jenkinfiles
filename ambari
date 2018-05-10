@@ -23,6 +23,7 @@ for (x in labels) {
 def runStages(label) {
     stage('Prepare ' + label) {
         checkout([$class: 'GitSCM', branches: [[name: 'trunk']], userRemoteConfigs: [[url: 'https://github.com/apache/ambari/']]])
+        sh "git apply /var/lib/jenkins/.m2/repository/patches/ambari/*.patch"
     }
     stage('Compile ' + label) {
         sh '''                    
