@@ -29,6 +29,7 @@ def runStages(label) {
     stage('Test ' + label) {
         try {
             sh '''
+                find -iname TEST-*.xml -exec touch {} +
                 echo 'Editing for OOM issue in jenkins..'
                 for i in `find -iname TEST-*.xml -exec du -sh {} + | awk '{print $1}' | grep M`
                 do
