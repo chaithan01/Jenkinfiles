@@ -1,6 +1,9 @@
 properties([parameters([text(defaultValue: '''x86ub16
+x86ub18
 x86rh7
+x86rh75
 ppcub16
+ppcub18
 ppcrh7
 ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 0 * * 5''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
@@ -26,7 +29,7 @@ def runStages(label) {
         MAVEN_OPTS          =   '-Xmx2g -XX:ReservedCodeCacheSize=512m -XX:PermSize=1024m -XX:MaxPermSize=1024m'
         //JAVA_TOOL_OPTIONS   =   '-Dos.arch=ppc64le'
     }
-    stage('Prepare ' + label) {
+    stage('Compile ' + label) {
         git branch: 'trunk', url: 'https://github.com/apache/kafka.git'
         sh '''
             if [ "ppc64le" = `uname -p` ]
@@ -34,8 +37,6 @@ def runStages(label) {
                 git apply /var/lib/jenkins/.m2/repository/patches/kafka/power*.patch
             fi
         '''
-    }
-    stage('Compile ' + label) {
         // bootstrap and download the wrapper
         sh "gradle"
         // Building a binary release gzipped tar ball
