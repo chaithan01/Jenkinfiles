@@ -1,5 +1,7 @@
 properties([parameters([text(defaultValue: '''x86ub16
+x86ub18
 x86rh7
+x86rh75
 ppcrh7
 ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 6 * * 3''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
@@ -21,11 +23,10 @@ for (x in labels) {
     }
 }
 def runStages(label) {
-    stage('Prepare ' + label) {
+    stage('Compile ' + label) {
         checkout([$class: 'GitSCM', branches: [[name: 'trunk']], userRemoteConfigs: [[url: 'https://github.com/apache/ambari/']]])
         //sh "git apply /var/lib/jenkins/.m2/repository/patches/ambari/*.patch"
-    }
-    stage('Compile ' + label) {
+        
         sh '''                    
             mvn clean
             mkdir -p /var/lib/jenkins/workspace/ambari/ambari-metrics/ambari-metrics-timelineservice/target/embedded/
