@@ -1,6 +1,9 @@
 properties([parameters([text(defaultValue: '''x86ub16
+x86ub18
 x86rh7
+x86rh75
 ppcub16
+ppcub18
 ppcrh7
 ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 8 * * 3''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
@@ -24,11 +27,9 @@ for (x in labels) {
     }
 }
 def runStages(label) {
-    stage('Prepare ' + label) {
+    stage('Compile ' + label) {
         git branch: 'master', url: 'https://github.com/apache/falcon.git'
         sh "git apply /var/lib/jenkins/.m2/repository/patches/falcon/*.patch"
-    }
-    stage('Compile ' + label) {
         sh "mvn clean install -DskipTests"
     }
     stage('Test ' + label) {
