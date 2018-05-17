@@ -1,6 +1,9 @@
 properties([parameters([text(defaultValue: '''x86ub16
+x86ub18
 x86rh7
+x86rh75
 ppcub16
+ppcub18
 ppcrh7
 ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 9 * * 5''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
@@ -25,10 +28,8 @@ def runStages(label) {
     environment {
         JAVA_TOOL_OPTIONS = "-Xmx4G -XX:MaxPermSize=4G -Xms1G"
     }
-    stage('Prepare ' + label) {
-        git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
-    }
     stage('Compile ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/zookeeper.git'
         sh "ant -keep-going clean compile"
     }
     stage('Test ' + label) {
