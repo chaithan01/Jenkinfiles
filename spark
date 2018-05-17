@@ -26,12 +26,16 @@ def runStages(label) {
         git branch: 'master', url: 'https://github.com/apache/spark.git'
     }
     stage('Compile ' + label) {
-        sh "mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr"
+        sh '''
+            export _JAVA_OPTIONS='-XX:+UseConcMarkSweepGC'
+            mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr
+        '''
     }
     stage('Test ' + label) {
         try {
             sh '''
                 export MAVEN_OPTS='-Xmx5g -Xms128m -XX:MaxPermSize=512m'
+                export _JAVA_OPTIONS='-XX:+UseConcMarkSweepGC'
                 export JAVA_TOOL_OPTIONS='-Xmx5g -XX:MaxPermSize=512m -Xms128m'
                 mvn clean install -Phadoop-2.7 -Phive -Phive-thriftserver -Pyarn,sparkr -fn
             '''
