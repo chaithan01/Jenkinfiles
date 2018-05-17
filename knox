@@ -25,10 +25,8 @@ for (x in labels) {
     }
 }
 def runStages(label) {
-    stage('Prepare ' + label) {
-        git branch: 'master', url: 'https://github.com/apache/knox.git'
-    }
     stage('Compile ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/knox.git'
         sh "mvn clean install -DskipTests"
     }
     stage('Test ' + label) {
