@@ -25,10 +25,8 @@ for (x in labels) {
     }
 }
 def runStages(label) {
-    stage('Prepare ' + label) {
-        git branch: 'master', url: 'https://github.com/apache/accumulo.git'
-    }
     stage('Compile ' + label) {
+        git branch: 'master', url: 'https://github.com/apache/accumulo.git'
         sh '''
             export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/
             mvn clean install -DskipTests
