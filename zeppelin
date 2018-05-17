@@ -1,6 +1,9 @@
 properties([disableConcurrentBuilds(),  parameters([text(defaultValue: '''x86ub16
+x86ub18
 x86rh7
+x86rh75
 ppcub16
+ppcub18
 ppcrh7
 ppcrh75''', description: '', name: 'nodelabels')]), pipelineTriggers([cron('''TZ=Asia/Kolkata
 H 8 * * 5''')]), buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '15')),])
@@ -24,11 +27,9 @@ for (x in labels) {
     }
 }
 def runStages(label) {
-    stage('Prepare ' + label) {
+    stage('Compile ' + label) {
         git branch: 'master', url: 'https://github.com/apache/zeppelin.git'
         sh "git apply /var/lib/jenkins/.m2/repository/patches/zeppelin/*"
-    }
-    stage('Compile ' + label) {
         sh '''
             export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk/'
             mvn clean install -DskipTests -Pspark-2.0 -Phadoop-2.7 -Dhadoop.version=2.7.1 -Drat.skip -Dcheckstyle.skip
